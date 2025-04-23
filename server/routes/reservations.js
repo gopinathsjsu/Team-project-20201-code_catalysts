@@ -64,3 +64,10 @@ router.get('/availability', reservationController.checkAvailability);
 // @route   GET api/reservations/stats
 // @desc    Get reservation statistics
 // @access  Private (Manager/Admin)
+router.get(
+  '/stats',
+  [auth],
+  reservationController.getReservationStats
+);
+
+module.exports = router;
