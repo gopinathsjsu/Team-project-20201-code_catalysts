@@ -107,3 +107,6 @@ router.get('/manager/list', [auth, isRestaurantManager], restaurantController.ge
 // @route   GET api/restaurants/pending
 // @desc    Get pending restaurant approvals
 // @access  Private (Admin only)
+router.get('/admin/pending', [auth, isAdmin], restaurantController.getPendingRestaurants);
+
+module.exports = router;
