@@ -452,9 +452,9 @@ const RestaurantSettings = () => {
             </Grid>
           </DialogContent>
           <DialogActions>
-            {/* <Button onClick={handleCloseTableDialog} disabled={submittingTable} color="inherit">
+            <Button onClick={handleCloseTableDialog} disabled={submittingTable} color="inherit">
               Cancel
-            </Button> */}
+            </Button>
             <Button
               type="submit"
               variant="contained"
