@@ -3,13 +3,12 @@ import axios from 'axios';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
-// Handle errors consistently
+// Helper function to handle API errors
 const handleApiError = (error) => {
   console.error('API Error:', error);
   
   if (error.response) {
-    // The request was made and the server responded with a status code
-    // that falls out of the range of 2xx
+    // The request was made and the server responded with an error status
     return {
       success: false,
       message: error.response.data.message || 'An error occurred',
@@ -22,7 +21,7 @@ const handleApiError = (error) => {
       message: 'No response from server. Please check your internet connection.'
     };
   } else {
-    // Something happened in setting up the request that triggered an Error
+    // Something happened in setting up the request
     return {
       success: false,
       message: error.message || 'An unknown error occurred'
@@ -61,14 +60,17 @@ export const getRestaurantById = async (id) => {
 };
 
 // Create a new restaurant (for restaurant managers)
-export const createRestaurant = async (restaurantData, token) => {
+export const createRestaurant = async (formData, token) => { // Rename argument for clarity
   try {
-    const response = await axios.post(`${API_URL}/restaurants`, restaurantData, {
+    // Directly use the formData object passed from the component
+    // No need to create a new FormData or loop/append fields here
+    const response = await axios.post(`${API_URL}/restaurants`, formData, {
       headers: {
-        'x-auth-token': token,
-        'Content-Type': 'multipart/form-data'  // For uploading images
+        'x-auth-token': token
+        // 'Content-Type': 'multipart/form-data' // Axios sets this automatically for FormData
       }
     });
+
     return response.data;
   } catch (error) {
     return handleApiError(error);
@@ -76,14 +78,17 @@ export const createRestaurant = async (restaurantData, token) => {
 };
 
 // Update restaurant (for restaurant managers)
-export const updateRestaurant = async (id, restaurantData, token) => {
+export const updateRestaurant = async (id, formData, token) => { // Rename argument for clarity
   try {
-    const response = await axios.put(`${API_URL}/restaurants/${id}`, restaurantData, {
+    // Directly use the formData object passed from the component
+    // No need to create a new FormData or loop/append fields here
+    const response = await axios.put(`${API_URL}/restaurants/${id}`, formData, {
       headers: {
-        'x-auth-token': token,
-        'Content-Type': 'multipart/form-data'  // For uploading images
+        'x-auth-token': token
+        // 'Content-Type': 'multipart/form-data' // Axios sets this automatically for FormData
       }
     });
+
     return response.data;
   } catch (error) {
     return handleApiError(error);
@@ -98,6 +103,7 @@ export const deleteRestaurant = async (id, token) => {
         'x-auth-token': token
       }
     });
+    
     return response.data;
   } catch (error) {
     return handleApiError(error);
@@ -114,29 +120,97 @@ export const getRestaurantReviews = async (restaurantId) => {
   }
 };
 
-// Submit a restaurant review
-export const submitReview = async (reviewData, token) => {
+// Get restaurant manager's restaurants
+export const getManagerRestaurants = async (token) => {
   try {
-    const response = await axios.post(`${API_URL}/reviews`, reviewData, {
+    const response = await axios.get(`${API_URL}/restaurants/manager/list`, {
       headers: {
         'x-auth-token': token
       }
     });
+    
     return response.data;
   } catch (error) {
     return handleApiError(error);
   }
 };
 
-// Get restaurant manager's restaurants
-export const getManagerRestaurants = async (token) => {
+// Check restaurant availability
+export const checkAvailability = async (restaurantId, date, time, partySize) => {
   try {
-    const response = await axios.get(`${API_URL}/restaurants/manager`, {
+    const response = await axios.get(`${API_URL}/reservations/availability`, {
+      params: {
+        restaurant_id: restaurantId,
+        date,
+        time, 
+        party_size: partySize
+      }
+    });
+    
+    return response.data;
+  } catch (error) {
+    return handleApiError(error);
+  }
+};
+
+
+// --- Table Functions ---
+
+// Get tables for a specific restaurant
+export const getRestaurantTables = async (restaurantId, token) => {
+  try {
+    const response = await axios.get(`${API_URL}/restaurants/${restaurantId}/tables`, {
       headers: {
         'x-auth-token': token
       }
     });
-    return response.data;
+    return response.data; // Expect { success: true, tables: [...] }
+  } catch (error) {
+    return handleApiError(error);
+  }
+};
+
+// Create a new table for a restaurant
+export const createRestaurantTable = async (tableData, token) => {
+  // tableData should include { restaurant_id, table_number, capacity }
+  try {
+    const response = await axios.post(`${API_URL}/tables`, tableData, {
+      headers: {
+        'x-auth-token': token,
+        'Content-Type': 'application/json' // Sending JSON data
+      }
+    });
+    return response.data; // Expect { success: true, message: '...', table: {...} }
+  } catch (error) {
+    return handleApiError(error);
+  }
+};
+
+// Update an existing table
+export const updateRestaurantTable = async (tableId, tableData, token) => {
+  // tableData should include { table_number, capacity }
+  try {
+    const response = await axios.put(`${API_URL}/tables/${tableId}`, tableData, {
+      headers: {
+        'x-auth-token': token,
+        'Content-Type': 'application/json' // Sending JSON data
+      }
+    });
+    return response.data; // Expect { success: true, message: '...', table: {...} }
+  } catch (error) {
+    return handleApiError(error);
+  }
+};
+
+// Delete a table
+export const deleteRestaurantTable = async (tableId, token) => {
+  try {
+    const response = await axios.delete(`${API_URL}/tables/${tableId}`, {
+      headers: {
+        'x-auth-token': token
+      }
+    });
+    return response.data; // Expect { success: true, message: '...' }
   } catch (error) {
     return handleApiError(error);
   }
@@ -150,6 +224,10 @@ export default {
   updateRestaurant,
   deleteRestaurant,
   getRestaurantReviews,
-  submitReview,
-  getManagerRestaurants
+  getManagerRestaurants,
+  checkAvailability,
+  getRestaurantTables,
+  createRestaurantTable,
+  updateRestaurantTable,
+  deleteRestaurantTable
 };
