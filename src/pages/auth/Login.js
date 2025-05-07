@@ -3,17 +3,17 @@ import React, { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { 
-  Container, 
-  Typography, 
-  TextField, 
-  Button, 
-  Box, 
-  Paper, 
-  Grid, 
+import {
+  Container,
+  Typography,
+  TextField,
+  Button,
+  Box,
+  Paper,
+  Grid,
   CircularProgress,
   InputAdornment,
-  IconButton
+  IconButton,
 } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import AuthContext from '../../context/AuthContext';
@@ -23,50 +23,60 @@ const Login = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
 
-  // Formik validation schema
   const validationSchema = Yup.object({
-    email: Yup
-      .string()
-      .email('Enter a valid email')
-      .required('Email is required'),
-    password: Yup
-      .string()
-      .min(6, 'Password should be of minimum 6 characters length')
-      .required('Password is required'),
+    email: Yup.string().email('Enter a valid email').required('Email is required'),
+    password: Yup.string().min(6, 'Password should be of minimum 6 characters').required('Password is required'),
   });
 
-  // Initialize formik
   const formik = useFormik({
     initialValues: {
       email: '',
       password: '',
     },
-    validationSchema: validationSchema,
+    validationSchema,
     onSubmit: async (values) => {
       const result = await login(values);
-      
       if (!result.success) {
-        // Error is handled by the context via toast
         console.error('Login failed:', result.message);
       }
-      // If successful, the context will handle navigation
     },
   });
 
-  // Toggle password visibility
   const handleTogglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
   return (
-    <Container maxWidth="sm">
-      <Paper elevation={3} className="auth-container">
-        <Box p={4}>
-          <Typography variant="h4" component="h1" align="center" gutterBottom>
-            Login to DineEase
-          </Typography>
-          
-          <Box component="form" onSubmit={formik.handleSubmit} noValidate sx={{ mt: 2 }}>
+    <Box
+      sx={{
+        minHeight: '100vh',
+        background: 'linear-gradient(to right, #ece9e6, #ffffff)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <Container maxWidth="sm">
+        <Paper
+          elevation={6}
+          sx={{
+            borderRadius: 4,
+            overflow: 'hidden',
+            padding: 4,
+            backgroundColor: '#fff',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.1)',
+          }}
+        >
+          <Box textAlign="center" mb={3}>
+            <Typography variant="h4" fontWeight={600} gutterBottom>
+              Welcome Back
+            </Typography>
+            <Typography variant="subtitle1" color="text.secondary">
+              Login to your DineEase account
+            </Typography>
+          </Box>
+
+          <Box component="form" onSubmit={formik.handleSubmit} noValidate>
             <TextField
               margin="normal"
               required
@@ -81,7 +91,7 @@ const Login = () => {
               error={formik.touched.email && Boolean(formik.errors.email)}
               helperText={formik.touched.email && formik.errors.email}
             />
-            
+
             <TextField
               margin="normal"
               required
@@ -98,41 +108,46 @@ const Login = () => {
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      onClick={handleTogglePasswordVisibility}
-                      edge="end"
-                    >
+                    <IconButton onClick={handleTogglePasswordVisibility} edge="end">
                       {showPassword ? <VisibilityOff /> : <Visibility />}
                     </IconButton>
                   </InputAdornment>
                 ),
               }}
             />
-            
+
             <Button
               type="submit"
               fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2 }}
+              sx={{
+                mt: 3,
+                mb: 2,
+                py: 1.5,
+                fontWeight: 'bold',
+                backgroundColor: '#1976d2',
+                '&:hover': {
+                  backgroundColor: '#115293',
+                },
+              }}
               disabled={formik.isSubmitting}
             >
-              {formik.isSubmitting ? <CircularProgress size={24} /> : 'Login'}
+              {formik.isSubmitting ? <CircularProgress size={24} color="inherit" /> : 'Login'}
             </Button>
-            
-            <Grid container>
+
+            <Grid container justifyContent="flex-end">
               <Grid item>
                 <Link to="/register" style={{ textDecoration: 'none' }}>
                   <Typography variant="body2" color="primary">
-                    {"Don't have an account? Sign Up"}
+                    Don’t have an account? Sign Up
                   </Typography>
                 </Link>
               </Grid>
             </Grid>
           </Box>
-        </Box>
-      </Paper>
-    </Container>
+        </Paper>
+      </Container>
+    </Box>
   );
 };
 
