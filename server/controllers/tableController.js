@@ -61,3 +61,44 @@ exports.getRestaurantTables = async (req, res) => {
     res.status(500).json({ success: false, message: 'Server error' });
   }
 };
+
+// @desc    Create a new table for a restaurant
+// @route   POST /api/tables
+// @access  Private (Restaurant Manager)
+exports.createTable = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ success: false, errors: errors.array() });
+  }
+
+  const { restaurant_id, table_number, capacity } = req.body;
+  const managerId = req.user.id;
+
+  try {
+    // Check if the user owns the restaurant they are adding a table to
+    const ownershipCheck = await checkRestaurantOwnership(restaurant_id, managerId);
+    if (!ownershipCheck.exists) {
+        return res.status(404).json({ success: false, message: ownershipCheck.message });
+    }
+    if (!ownershipCheck.owned) {
+        return res.status(403).json({ success: false, message: ownershipCheck.message });
+    }
+
+    // Insert the new table
+    const [result] = await db.query(
+      'INSERT INTO tables (restaurant_id, table_number, capacity) VALUES (?, ?, ?)',
+      [restaurant_id, table_number, capacity]
+    );
+
+    const [newTable] = await db.query('SELECT * FROM tables WHERE id = ?', [result.insertId]);
+
+    res.status(201).json({ success: true, message: 'Table created successfully', table: newTable[0] });
+  } catch (err) {
+    console.error('Error creating table:', err.message);
+    // Handle potential duplicate table_number for the same restaurant if needed
+    if (err.code === 'ER_DUP_ENTRY') {
+        return res.status(400).json({ success: false, message: 'Table number already exists for this restaurant.' });
+    }
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+};
