@@ -33,3 +33,31 @@ const checkRestaurantOwnership = async (restaurantId, userId) => {
     }
     return { owned: true, exists: true };
 };
+
+// @desc    Get tables for a specific restaurant
+// @route   GET /api/restaurants/:restaurantId/tables
+// @access  Private (Restaurant Manager)
+exports.getRestaurantTables = async (req, res) => {
+  const { restaurantId } = req.params;
+  const managerId = req.user.id;
+
+  try {
+    // Verify ownership of the restaurant first
+    const ownershipCheck = await checkRestaurantOwnership(restaurantId, managerId);
+    if (!ownershipCheck.exists) {
+        return res.status(404).json({ success: false, message: ownershipCheck.message });
+    }
+    if (!ownershipCheck.owned) {
+        return res.status(403).json({ success: false, message: ownershipCheck.message });
+    }
+
+    const [tables] = await db.query(
+      'SELECT * FROM tables WHERE restaurant_id = ? ORDER BY table_number',
+      [restaurantId]
+    );
+    res.json({ success: true, tables });
+  } catch (err) {
+    console.error('Error fetching tables:', err.message);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+};
