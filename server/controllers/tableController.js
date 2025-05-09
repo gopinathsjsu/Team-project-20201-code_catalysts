@@ -144,3 +144,35 @@ exports.updateTable = async (req, res) => {
     res.status(500).json({ success: false, message: 'Server error' });
   }
 };
+
+// @desc    Delete a table
+// @route   DELETE /api/tables/:id
+// @access  Private (Restaurant Manager)
+exports.deleteTable = async (req, res) => {
+  const { id } = req.params;
+  const managerId = req.user.id;
+
+  try {
+    // Check ownership
+    const ownershipCheck = await checkTableOwnership(id, managerId);
+     if (!ownershipCheck.exists) {
+        return res.status(404).json({ success: false, message: ownershipCheck.message });
+    }
+    if (!ownershipCheck.owned) {
+        return res.status(403).json({ success: false, message: ownershipCheck.message });
+    }
+
+    // Perform delete
+    const [result] = await db.query('DELETE FROM tables WHERE id = ?', [id]);
+
+    if (result.affectedRows === 0) {
+        // This case should ideally be caught by checkTableOwnership, but as a fallback
+        return res.status(404).json({ success: false, message: 'Table not found or already deleted' });
+    }
+
+    res.json({ success: true, message: 'Table deleted successfully' });
+  } catch (err) {
+    console.error('Error deleting table:', err.message);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+};
