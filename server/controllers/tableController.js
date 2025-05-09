@@ -102,3 +102,45 @@ exports.createTable = async (req, res) => {
     res.status(500).json({ success: false, message: 'Server error' });
   }
 };
+
+
+// @desc    Update an existing table
+// @route   PUT /api/tables/:id
+// @access  Private (Restaurant Manager)
+exports.updateTable = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ success: false, errors: errors.array() });
+  }
+
+  const { id } = req.params;
+  const { table_number, capacity } = req.body;
+  const managerId = req.user.id;
+
+  try {
+    // Check ownership
+    const ownershipCheck = await checkTableOwnership(id, managerId);
+    if (!ownershipCheck.exists) {
+        return res.status(404).json({ success: false, message: ownershipCheck.message });
+    }
+    if (!ownershipCheck.owned) {
+        return res.status(403).json({ success: false, message: ownershipCheck.message });
+    }
+
+    // Perform update
+    await db.query(
+      'UPDATE tables SET table_number = ?, capacity = ? WHERE id = ?',
+      [table_number, capacity, id]
+    );
+
+    const [updatedTable] = await db.query('SELECT * FROM tables WHERE id = ?', [id]);
+
+    res.json({ success: true, message: 'Table updated successfully', table: updatedTable[0] });
+  } catch (err) {
+    console.error('Error updating table:', err.message);
+     if (err.code === 'ER_DUP_ENTRY') {
+        return res.status(400).json({ success: false, message: 'Table number already exists for this restaurant.' });
+    }
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+};
