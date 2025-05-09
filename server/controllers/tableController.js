@@ -19,3 +19,17 @@ const checkTableOwnership = async (tableId, userId) => {
   }
   return { owned: true, exists: true };
 };
+// Helper function to check if the user owns the restaurant before adding a table
+const checkRestaurantOwnership = async (restaurantId, userId) => {
+    const [restaurants] = await db.query(
+      'SELECT manager_id FROM restaurants WHERE id = ?',
+      [restaurantId]
+    );
+    if (restaurants.length === 0) {
+        return { owned: false, exists: false, message: 'Restaurant not found' };
+    }
+    if (restaurants[0].manager_id !== userId) {
+        return { owned: false, exists: true, message: 'User does not own this restaurant' };
+    }
+    return { owned: true, exists: true };
+};
