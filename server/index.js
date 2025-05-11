@@ -36,6 +36,10 @@ db.getConnection()
     console.error('Database connection error:', err);
   });
 
+  // --- API Routes ---
+// Define API endpoints BEFORE the static file serving/catch-all route
+console.log('[Routes] Configuring API routes...');
+
 // Routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/restaurants', require('./routes/restaurants'));
