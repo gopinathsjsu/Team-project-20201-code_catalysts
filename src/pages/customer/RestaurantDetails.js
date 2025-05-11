@@ -30,7 +30,8 @@ import {
   List,
   ListItem,
   ListItemText,
-  ListItemAvatar
+  ListItemAvatar,
+  Alert
 } from '@mui/material';
 import { 
   LocationOn, 
@@ -46,89 +47,13 @@ import {
 } from '@mui/icons-material';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider, DatePicker, TimePicker } from '@mui/x-date-pickers';
-import { format, addDays, parse, isAfter, isBefore, parseISO } from 'date-fns';
+import { format, addDays, parse, parseISO, format as formatDate } from 'date-fns';
 import AuthContext from '../../context/AuthContext';
-import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
-
-// Mock restaurant data for development
-const mockRestaurant = {
-  id: 1,
-  name: 'The Gourmet Kitchen',
-  description: 'Experience fine dining with our award-winning international cuisine in an elegant setting.',
-  cuisine_type: 'International',
-  cost_rating: 4,
-  rating: 4.8,
-  reviews_count: 248,
-  address_line1: '123 Main St',
-  address_line2: 'Suite 101',
-  city: 'Anytown',
-  state: 'NY',
-  zip_code: '10001',
-  phone: '(555) 123-4567',
-  email: 'info@gourmetkitchen.com',
-  website: 'https://gourmetkitchen.example.com',
-  latitude: 40.712776,
-  longitude: -74.005974,
-  manager_id: 2,
-  created_at: '2022-01-01T00:00:00.000Z',
-  updated_at: '2022-06-01T00:00:00.000Z',
-  is_approved: true,
-  photos: [
-    {
-      id: 1,
-      url: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4',
-      is_primary: true
-    },
-    {
-      id: 2,
-      url: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0',
-      is_primary: false
-    },
-    {
-      id: 3,
-      url: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836',
-      is_primary: false
-    }
-  ],
-  operating_hours: [
-    { day_of_week: 'Monday', opening_time: '11:00', closing_time: '22:00' },
-    { day_of_week: 'Tuesday', opening_time: '11:00', closing_time: '22:00' },
-    { day_of_week: 'Wednesday', opening_time: '11:00', closing_time: '22:00' },
-    { day_of_week: 'Thursday', opening_time: '11:00', closing_time: '23:00' },
-    { day_of_week: 'Friday', opening_time: '11:00', closing_time: '23:00' },
-    { day_of_week: 'Saturday', opening_time: '12:00', closing_time: '23:00' },
-    { day_of_week: 'Sunday', opening_time: '12:00', closing_time: '21:00' }
-  ],
-  available_times: [
-    '17:00', '17:30', '18:00', '18:30', '19:00', '19:30', '20:00', '20:30', '21:00'
-  ],
-  reviews: [
-    {
-      id: 1,
-      customer_id: 3,
-      customer_name: 'John Smith',
-      rating: 5,
-      comment: 'Absolutely amazing experience! The food was exquisite and the service impeccable.',
-      created_at: '2022-05-15T14:30:00.000Z'
-    },
-    {
-      id: 2,
-      customer_id: 4,
-      customer_name: 'Emma Johnson',
-      rating: 4,
-      comment: 'Great food and ambiance. Slightly pricey but worth it for a special occasion.',
-      created_at: '2022-04-22T19:15:00.000Z'
-    },
-    {
-      id: 3,
-      customer_id: 5,
-      customer_name: 'Michael Brown',
-      rating: 5,
-      comment: 'One of the best dining experiences I have. Will definitely return!',
-      created_at: '2022-03-10T20:45:00.000Z'
-    }
-  ]
-};
+import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
+import { getRestaurantById } from '../../services/restaurantService';
+import { createReservation } from '../../services/reservationService';
+import { getRestaurantReviews, submitReview } from '../../services/reviewService';
+import { toast } from 'react-toastify';
 
 // Tab panel component
 function TabPanel(props) {
@@ -155,12 +80,24 @@ const RestaurantDetails = () => {
   const { id } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
-  const { isAuthenticated, currentUser } = useContext(AuthContext);
+  const { isAuthenticated, currentUser, token } = useContext(AuthContext);
   const queryParams = new URLSearchParams(location.search);
+  
+  // Load Google Maps API
+  const { isLoaded: isMapLoaded } = useJsApiLoader({
+    id: 'google-map-script',
+    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY || ''
+  });
   
   // State for restaurant data
   const [restaurant, setRestaurant] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
+  // State for reviews
+  const [reviews, setReviews] = useState([]);
+  const [reviewsSummary, setReviewsSummary] = useState(null);
+  const [loadingReviews, setLoadingReviews] = useState(false);
   
   // State for tabs
   const [tabValue, setTabValue] = useState(0);
@@ -170,7 +107,7 @@ const RestaurantDetails = () => {
     date: queryParams.get('date') ? new Date(queryParams.get('date')) : new Date(),
     time: queryParams.get('time') 
       ? parse(queryParams.get('time'), 'HH:mm', new Date()) 
-      : new Date(),
+      : new Date(new Date().setHours(19, 0, 0, 0)), // Default to 7:00 PM
     partySize: parseInt(queryParams.get('partySize')) || 2,
     specialRequest: ''
   });
@@ -184,21 +121,51 @@ const RestaurantDetails = () => {
     rating: 0,
     comment: ''
   });
+  const [reviewSubmitting, setReviewSubmitting] = useState(false);
   
-  // Fetch restaurant data on component mount
+  // Fetch restaurant data and reviews on component mount
   useEffect(() => {
-    const fetchRestaurant = async () => {
+    const fetchRestaurantData = async () => {
       setLoading(true);
+      setError(null);
       
-      // In a real application, this would be an API call with the restaurant ID
-      // For now, we'll use a setTimeout to simulate an API call with mock data
-      setTimeout(() => {
-        setRestaurant(mockRestaurant);
+      try {
+        // Fetch restaurant details
+        const response = await getRestaurantById(id);
+        
+        if (response.success) {
+          setRestaurant(response.restaurant);
+        } else {
+          setError(response.message || 'Failed to fetch restaurant details');
+          toast.error(response.message || 'Failed to fetch restaurant details');
+        }
+      } catch (err) {
+        setError('An unexpected error occurred. Please try again later.');
+        toast.error('An unexpected error occurred. Please try again later.');
+      } finally {
         setLoading(false);
-      }, 1000);
+      }
     };
     
-    fetchRestaurant();
+    const fetchReviews = async () => {
+      setLoadingReviews(true);
+      
+      try {
+        const response = await getRestaurantReviews(id);
+        
+        if (response.success) {
+          setReviews(response.reviews || []);
+          setReviewsSummary(response.summary || null);
+        }
+      } catch (err) {
+        console.error('Error fetching reviews:', err);
+      } finally {
+        setLoadingReviews(false);
+      }
+    };
+    
+    fetchRestaurantData();
+    fetchReviews();
   }, [id]);
   
   // Handle tab change
@@ -222,7 +189,7 @@ const RestaurantDetails = () => {
     if (!isAuthenticated) {
       navigate('/login', { 
         state: { 
-          from: location.pathname,
+          from: location.pathname + location.search,
           message: 'Please log in to make a reservation'
         } 
       });
@@ -237,19 +204,43 @@ const RestaurantDetails = () => {
   const handleReservationConfirm = async () => {
     setReservationSubmitting(true);
     
-    // In a real application, this would be an API call to create the reservation
-    // For now, we'll use a setTimeout to simulate an API call
-    setTimeout(() => {
-      setReservationSubmitting(false);
-      setOpenDialog(false);
+    try {
+      // Format date and time for API
+      const formattedDate = format(reservationParams.date, 'yyyy-MM-dd');
+      const formattedTime = format(reservationParams.time, 'HH:mm');
       
-      // Navigate to the reservations page
-      navigate('/reservations', { 
-        state: { 
-          message: 'Reservation confirmed successfully!' 
-        } 
-      });
-    }, 1500);
+      // Prepare reservation data
+      const reservationData = {
+        restaurant_id: restaurant.id,
+        reservation_date: formattedDate,
+        reservation_time: formattedTime,
+        party_size: reservationParams.partySize,
+        special_request: reservationParams.specialRequest || undefined
+      };
+      
+      // Submit reservation
+      const response = await createReservation(reservationData, token);
+      
+      if (response.success) {
+        setOpenDialog(false);
+        toast.success('Reservation confirmed successfully!');
+        
+        // Navigate to the reservations page
+        navigate('/reservations', { 
+          state: { 
+            message: 'Reservation confirmed successfully!' 
+          } 
+        });
+      } else {
+        toast.error(response.message || 'Failed to create reservation');
+        setOpenDialog(false);
+      }
+    } catch (err) {
+      toast.error('An unexpected error occurred. Please try again later.');
+      setOpenDialog(false);
+    } finally {
+      setReservationSubmitting(false);
+    }
   };
   
   // Handle dialog close
@@ -266,7 +257,7 @@ const RestaurantDetails = () => {
   };
   
   // Handle review form submission
-  const handleReviewSubmit = (e) => {
+  const handleReviewSubmit = async (e) => {
     e.preventDefault();
     
     // Check if user is authenticated
@@ -280,28 +271,57 @@ const RestaurantDetails = () => {
       return;
     }
     
-    // In a real application, this would be an API call to submit the review
-    console.log('Review submitted:', reviewForm);
+    setReviewSubmitting(true);
     
-    // Reset form
-    setReviewForm({
-      rating: 0,
-      comment: ''
-    });
-    
-    // Show success message
-    alert('Review submitted successfully!');
+    try {
+      // Prepare review data
+      const reviewData = {
+        restaurant_id: restaurant.id,
+        rating: reviewForm.rating,
+        comment: reviewForm.comment
+      };
+      
+      // Submit review
+      const response = await submitReview(reviewData, token);
+      
+      if (response.success) {
+        toast.success('Review submitted successfully!');
+        
+        // Reset form
+        setReviewForm({
+          rating: 0,
+          comment: ''
+        });
+        
+        // Refresh reviews
+        const reviewsResponse = await getRestaurantReviews(id);
+        if (reviewsResponse.success) {
+          setReviews(reviewsResponse.reviews || []);
+          setReviewsSummary(reviewsResponse.summary || null);
+        }
+      } else {
+        toast.error(response.message || 'Failed to submit review');
+      }
+    } catch (err) {
+      toast.error('An unexpected error occurred. Please try again later.');
+    } finally {
+      setReviewSubmitting(false);
+    }
   };
   
   // Generate dollar signs for cost rating
-  const getCostRating = (rating) => {
-    return '₹'.repeat(rating);
+  const getCostRating = (rating = 0) => {
+    return '$'.repeat(rating);
   };
   
   // Format date for display
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return format(date, 'MMMM d, yyyy');
+  const formatReviewDate = (dateString) => {
+    try {
+      const date = parseISO(dateString);
+      return formatDate(date, 'MMMM d, yyyy');
+    } catch {
+      return dateString;
+    }
   };
   
   // Map container style
@@ -319,10 +339,13 @@ const RestaurantDetails = () => {
     );
   }
   
-  // If restaurant not found, show error message
-  if (!restaurant) {
+  // If error or restaurant not found, show error message
+  if (error || !restaurant) {
     return (
       <Container maxWidth="md" sx={{ my: 4 }}>
+        <Alert severity="error" sx={{ mb: 4 }}>
+          {error || 'Restaurant not found'}
+        </Alert>
         <Paper sx={{ p: 4, textAlign: 'center' }}>
           <Typography variant="h5" color="error" gutterBottom>
             Restaurant Not Found
@@ -352,9 +375,11 @@ const RestaurantDetails = () => {
         
         <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 2, mb: 2 }}>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Rating value={restaurant.rating} precision={0.1} readOnly />
+            <Rating value={Number(restaurant.average_rating) || 0} precision={0.1} readOnly />
             <Typography variant="body2" sx={{ ml: 1 }}>
-              {restaurant.rating} ({restaurant.reviews_count} reviews)
+              {Number(restaurant.average_rating) 
+                ? `${Number(restaurant.average_rating).toFixed(1)} (${restaurant.reviews_count} reviews)`
+                : 'No reviews yet'}
             </Typography>
           </Box>
           
@@ -378,20 +403,41 @@ const RestaurantDetails = () => {
       {/* Restaurant Photos */}
       <Box className="restaurant-photos" sx={{ mb: 4 }}>
         <Grid container spacing={2}>
-          {restaurant.photos.map((photo, index) => (
-            <Grid item xs={12} sm={index === 0 ? 12 : 6} md={index === 0 ? 8 : 4} key={photo.id}>
+          {restaurant.photos && restaurant.photos.length > 0 ? (
+            restaurant.photos.map((photo, index) => (
+              <Grid 
+                item 
+                xs={12} 
+                sm={index === 0 ? 12 : 6} 
+                md={index === 0 ? 8 : 4} 
+                key={photo.id}
+              >
+                <img 
+                  src={`${process.env.REACT_APP_API_URL}${photo.photo_url}`}
+                  alt={`${restaurant.name} - ${index + 1}`} 
+                  style={{ 
+                    width: '100%', 
+                    height: index === 0 ? '400px' : '200px', 
+                    objectFit: 'cover',
+                    borderRadius: '8px'
+                  }} 
+                />
+              </Grid>
+            ))
+          ) : (
+            <Grid item xs={12}>
               <img 
-                src={photo.url} 
-                alt={`${restaurant.name} - ${index + 1}`} 
+                src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4"
+                alt={restaurant.name} 
                 style={{ 
                   width: '100%', 
-                  height: index === 0 ? '400px' : '200px', 
+                  height: '400px', 
                   objectFit: 'cover',
                   borderRadius: '8px'
                 }} 
               />
             </Grid>
-          ))}
+          )}
         </Grid>
       </Box>
       
@@ -451,7 +497,7 @@ const RestaurantDetails = () => {
               </Typography>
               
               <Box sx={{ mb: 3 }}>
-                {restaurant.operating_hours.map((hours, index) => (
+                {restaurant.operating_hours && restaurant.operating_hours.map((hours, index) => (
                   <Box 
                     key={hours.day_of_week} 
                     sx={{ 
@@ -477,25 +523,37 @@ const RestaurantDetails = () => {
                 Location
               </Typography>
               
-              <LoadScript
-                googleMapsApiKey="YOUR_GOOGLE_MAPS_API_KEY"
-              >
+              {isMapLoaded && restaurant.latitude && restaurant.longitude ? (
                 <GoogleMap
                   mapContainerStyle={mapContainerStyle}
                   center={{
-                    lat: restaurant.latitude,
-                    lng: restaurant.longitude
+                    lat: parseFloat(restaurant.latitude),
+                    lng: parseFloat(restaurant.longitude)
                   }}
                   zoom={15}
                 >
                   <Marker
                     position={{
-                      lat: restaurant.latitude,
-                      lng: restaurant.longitude
+                      lat: parseFloat(restaurant.latitude),
+                      lng: parseFloat(restaurant.longitude)
                     }}
                   />
                 </GoogleMap>
-              </LoadScript>
+              ) : (
+                <Paper
+                  sx={{
+                    height: '300px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    bgcolor: 'grey.200'
+                  }}
+                >
+                  <Typography variant="body2" color="text.secondary">
+                    {isMapLoaded ? 'Location data not available' : 'Loading map...'}
+                  </Typography>
+                </Paper>
+              )}
             </Grid>
           </Grid>
         </TabPanel>
@@ -522,25 +580,14 @@ const RestaurantDetails = () => {
               </Grid>
               
               <Grid item xs={12} sm={6}>
-                <FormControl fullWidth required>
-                  <InputLabel id="time-label">Time</InputLabel>
-                  <Select
-                    labelId="time-label"
-                    id="time"
-                    value={format(reservationParams.time, 'HH:mm')}
+                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                  <TimePicker
                     label="Time"
-                    onChange={(e) => {
-                      const time = parse(e.target.value, 'HH:mm', new Date());
-                      handleReservationChange('time', time);
-                    }}
-                  >
-                    {restaurant.available_times.map((time) => (
-                      <MenuItem key={time} value={time}>
-                        {time}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
+                    value={reservationParams.time}
+                    onChange={(newValue) => handleReservationChange('time', newValue)}
+                    renderInput={(params) => <TextField {...params} fullWidth required />}
+                  />
+                </LocalizationProvider>
               </Grid>
               
               <Grid item xs={12} sm={6}>
@@ -581,9 +628,15 @@ const RestaurantDetails = () => {
                   color="primary"
                   size="large"
                   fullWidth
+                  disabled={!isAuthenticated}
                 >
-                  Book Table
+                  {isAuthenticated ? 'Book Table' : 'Login to Book Table'}
                 </Button>
+                {!isAuthenticated && (
+                  <Typography variant="body2" color="text.secondary" sx={{ mt: 1, textAlign: 'center' }}>
+                    Please log in to make a reservation
+                  </Typography>
+                )}
               </Grid>
             </Grid>
           </Box>
@@ -597,43 +650,55 @@ const RestaurantDetails = () => {
                 Customer Reviews
               </Typography>
               
-              <List>
-                {restaurant.reviews.map((review) => (
-                  <ListItem 
-                    key={review.id} 
-                    alignItems="flex-start"
-                    sx={{ 
-                      px: 0,
-                      borderBottom: '1px solid #eee',
-                      mb: 2
-                    }}
-                  >
-                    <ListItemAvatar>
-                      <Avatar>{review.customer_name.charAt(0)}</Avatar>
-                    </ListItemAvatar>
-                    <ListItemText
-                      primary={
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                          <Typography component="span" variant="subtitle1">
-                            {review.customer_name}
-                          </Typography>
-                          <Typography component="span" variant="body2" color="text.secondary">
-                            {formatDate(review.created_at)}
-                          </Typography>
-                        </Box>
-                      }
-                      secondary={
-                        <>
-                          <Rating value={review.rating} size="small" readOnly sx={{ mt: 1, mb: 1 }} />
-                          <Typography variant="body2" color="text.primary" paragraph>
-                            {review.comment}
-                          </Typography>
-                        </>
-                      }
-                    />
-                  </ListItem>
-                ))}
-              </List>
+              {loadingReviews ? (
+                <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
+                  <CircularProgress />
+                </Box>
+              ) : reviews.length > 0 ? (
+                <List>
+                  {reviews.map((review) => (
+                    <ListItem 
+                      key={review.id} 
+                      alignItems="flex-start"
+                      sx={{ 
+                        px: 0,
+                        borderBottom: '1px solid #eee',
+                        mb: 2
+                      }}
+                    >
+                      <ListItemAvatar>
+                        <Avatar>{review.first_name?.charAt(0) || 'U'}</Avatar>
+                      </ListItemAvatar>
+                      <ListItemText
+                        primary={
+                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <Typography component="span" variant="subtitle1">
+                              {review.first_name} {review.last_name}
+                            </Typography>
+                            <Typography component="span" variant="body2" color="text.secondary">
+                              {formatReviewDate(review.created_at)}
+                            </Typography>
+                          </Box>
+                        }
+                        secondary={
+                          <>
+                            <Rating value={review.rating} size="small" readOnly sx={{ mt: 1, mb: 1 }} />
+                            <Typography variant="body2" color="text.primary" paragraph>
+                              {review.comment}
+                            </Typography>
+                          </>
+                        }
+                      />
+                    </ListItem>
+                  ))}
+                </List>
+              ) : (
+                <Box sx={{ textAlign: 'center', py: 4 }}>
+                  <Typography variant="body1">
+                    No reviews yet. Be the first to review!
+                  </Typography>
+                </Box>
+              )}
             </Grid>
             
             <Grid item xs={12} md={5}>
@@ -675,12 +740,89 @@ const RestaurantDetails = () => {
                     variant="contained"
                     color="primary"
                     sx={{ mt: 2 }}
-                    disabled={reviewForm.rating === 0 || !reviewForm.comment}
+                    disabled={!isAuthenticated || reviewForm.rating === 0 || !reviewForm.comment || reviewSubmitting}
                   >
-                    Submit Review
+                    {reviewSubmitting ? <CircularProgress size={24} /> : 'Submit Review'}
                   </Button>
+                  
+                  {!isAuthenticated && (
+                    <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                      Please log in to leave a review
+                    </Typography>
+                  )}
                 </Box>
               </Paper>
+              
+              {reviewsSummary && (
+                <Paper elevation={1} sx={{ p: 3, mt: 3 }}>
+                  <Typography variant="h6" gutterBottom>
+                    Rating Summary
+                  </Typography>
+                  
+                  <Box sx={{ mb: 2 }}>
+                    <Typography variant="h4" component="div" gutterBottom>
+                      {Number(reviewsSummary.average_rating) ? Number(reviewsSummary.average_rating).toFixed(1) : '0.0'}
+                      <Typography variant="body2" component="span" color="text.secondary" sx={{ ml: 1 }}>
+                        out of 5
+                      </Typography>
+                    </Typography>
+                    <Rating 
+                      value={Number(reviewsSummary.average_rating) || 0} 
+                      precision={0.1} 
+                      readOnly 
+                      sx={{ mb: 1 }} 
+                    />
+                    <Typography variant="body2" color="text.secondary">
+                      Based on {reviewsSummary.total_reviews || 0} reviews
+                    </Typography>
+                  </Box>
+                  
+                  <Box>
+                    {[5, 4, 3, 2, 1].map((rating) => {
+                      const count = reviewsSummary[`${rating}_star`] || 0;
+                      const percentage = reviewsSummary.total_reviews 
+                        ? Math.round((count / reviewsSummary.total_reviews) * 100) 
+                        : 0;
+                      
+                      return (
+                        <Box 
+                          key={rating}
+                          sx={{ 
+                            display: 'flex', 
+                            alignItems: 'center',
+                            mb: 0.5
+                          }}
+                        >
+                          <Typography variant="body2" sx={{ width: 50 }}>
+                            {rating} stars
+                          </Typography>
+                          <Box 
+                            sx={{ 
+                              flexGrow: 1, 
+                              ml: 1, 
+                              mr: 2,
+                              bgcolor: 'grey.200', 
+                              borderRadius: 1,
+                              overflow: 'hidden'
+                            }}
+                          >
+                            <Box 
+                              sx={{ 
+                                width: `${percentage}%`, 
+                                bgcolor: 'primary.main',
+                                height: 8
+                              }} 
+                            />
+                          </Box>
+                          <Typography variant="body2">
+                            {percentage}%
+                          </Typography>
+                        </Box>
+                      );
+                    })}
+                  </Box>
+                </Paper>
+              )}
             </Grid>
           </Grid>
         </TabPanel>
