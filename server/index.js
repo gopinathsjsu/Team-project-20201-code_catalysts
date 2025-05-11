@@ -19,7 +19,12 @@ const app = express();
 const PORT = process.env.PORT || 5000; // Correct for EB and local fallback
 
 // Database connection (ensure this path is correct)
- // Modern replacement for body-parser urlencoded
+const db = require('./config/database');
+
+// --- Core Middleware ---
+app.use(cors()); // TODO: Configure allowed origins specifically for production
+app.use(express.json()); // Modern replacement for body-parser JSON
+app.use(express.urlencoded({ extended: true })); // Modern replacement for body-parser urlencoded
 
 // --- Database Connection Test (Optional but helpful) ---
 async function testDbConnection() {
