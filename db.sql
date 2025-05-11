@@ -98,5 +98,8 @@ CREATE TABLE `reviews` (
   FOREIGN KEY (`customer_id`) REFERENCES `users`(`id`) ON DELETE CASCADE,
   FOREIGN KEY (`restaurant_id`) REFERENCES `restaurants`(`id`) ON DELETE CASCADE
 );
-
+-- Insert admin user
+INSERT INTO `users` (`email`, `password`, `first_name`, `last_name`, `role`) 
+VALUES ('admin@example.com', '$2b$10$HkQvGy4rTKJZ7HZf1wHCCO9BwMqQ1I5LUfVlj5h1O/xbUQJ8V2iHS', 'System', 'Admin', 'admin');
+-- Password is 'admin123' (hashed with bcrypt)
 
