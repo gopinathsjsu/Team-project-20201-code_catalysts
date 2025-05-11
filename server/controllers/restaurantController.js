@@ -4,6 +4,7 @@ const db = require('../config/database');
 const fs = require('fs');
 const path = require('path');
 const emailSender = require('../utils/emailSender');
+const { log } = require('console');
 
 // Get all restaurants
 exports.getAllRestaurants = async (req, res) => {
@@ -37,12 +38,15 @@ exports.searchRestaurants = async (req, res) => {
   
   try {
     let query = `
-      SELECT r.*, 
-        (SELECT COUNT(*) FROM reviews WHERE restaurant_id = r.id) as reviews_count,
-        (SELECT AVG(rating) FROM reviews WHERE restaurant_id = r.id) as average_rating,
-        (SELECT photo_url FROM restaurant_photos WHERE restaurant_id = r.id AND is_primary = 1 LIMIT 1) as primary_photo,
-        (SELECT COUNT(*) FROM reservations WHERE restaurant_id = r.id AND reservation_date = ? AND status IN ('confirmed', 'pending')) as bookings_today
+      SELECT 
+        r.*,
+        (SELECT COUNT(*) FROM reviews WHERE restaurant_id = r.id) AS reviews_count,
+        (SELECT AVG(rating) FROM reviews WHERE restaurant_id = r.id) AS average_rating,
+        (SELECT photo_url FROM restaurant_photos WHERE restaurant_id = r.id AND is_primary = 1 LIMIT 1) AS primary_photo,
+        (SELECT COUNT(*) FROM reservations WHERE restaurant_id = r.id AND reservation_date = ? AND status IN ('confirmed', 'pending')) AS bookings_today,
+        GROUP_CONCAT(DISTINCT oh.opening_time ORDER BY oh.opening_time SEPARATOR ',') AS available_times
       FROM restaurants r
+      LEFT JOIN operating_hours oh ON r.id = oh.restaurant_id
       WHERE r.is_approved = 1
     `;
     
@@ -72,33 +76,39 @@ exports.searchRestaurants = async (req, res) => {
       queryParams.push(rating);
     }
     
-    query += ` ORDER BY r.name`;
+    // Add time and party_size filter (complex subquery)
+    if (time && party_size) {
+      query += `
+        AND EXISTS (
+          SELECT 1
+          FROM tables t
+          WHERE t.restaurant_id = r.id
+            AND t.capacity >= ?
+            AND NOT EXISTS (
+              SELECT 1
+              FROM reservations res
+              WHERE res.table_id = t.id
+                AND res.reservation_date = ?
+                AND res.reservation_time = ?
+                AND res.status IN ('confirmed', 'pending')
+            )
+        )
+      `;
+      queryParams.push(party_size, date, time);
+    }
+    
+    query += ` GROUP BY r.id ORDER BY r.name`;
     
     const [restaurants] = await db.query(query, queryParams);
     
-    // Filter for available time slots if time and party_size are provided
+    //  Filter for available time slots if time and party_size are provided
     let availableRestaurants = restaurants;
     
     if (time && party_size) {
-      // This would normally involve a complex query to check table availability
-      // For simplicity, we'll just simulate available slots
       availableRestaurants = restaurants.map(restaurant => {
-        // Generate random available time slots near the requested time
-        const requestedHour = parseInt(time.split(':')[0]);
-        const availableTimes = [];
-        
-        // Add times 30 minutes before and after the requested time
-        for (let i = -1; i <= 1; i++) {
-          const hour = requestedHour + Math.floor(i / 2);
-          const minute = (i % 2) === 0 ? '00' : '30';
-          if (hour >= 10 && hour <= 22) { // Restaurant hours
-            availableTimes.push(`${hour}:${minute}`);
-          }
-        }
-        
         return {
           ...restaurant,
-          available_times: availableTimes
+          available_times: restaurant.available_times ? restaurant.available_times.split(',') : []
         };
       });
     }
