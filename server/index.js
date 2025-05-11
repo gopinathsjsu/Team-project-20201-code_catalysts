@@ -5,6 +5,14 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const path = require('path');
 
+if (process.env.NODE_ENV !== 'production') {
+  // Ensure this path is correct relative to server/index.js
+  require('dotenv').config({ path: path.resolve(__dirname, '.env') });
+  console.log('[ENV] Loaded .env file for local development.');
+} else {
+  console.log('[ENV] Running in production mode (assuming EB Environment Properties).');
+}
+
 // Initialize Express app
 const app = express();
 const PORT = process.env.PORT || 5000;
