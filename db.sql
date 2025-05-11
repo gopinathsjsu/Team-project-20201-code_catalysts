@@ -103,3 +103,12 @@ INSERT INTO `users` (`email`, `password`, `first_name`, `last_name`, `role`)
 VALUES ('admin@example.com', '$2b$10$HkQvGy4rTKJZ7HZf1wHCCO9BwMqQ1I5LUfVlj5h1O/xbUQJ8V2iHS', 'System', 'Admin', 'admin');
 -- Password is 'admin123' (hashed with bcrypt)
 
+-- Insert sample restaurant manager
+INSERT INTO `users` (`email`, `password`, `first_name`, `last_name`, `phone`, `role`) 
+VALUES ('manager@example.com', '$2b$10$HkQvGy4rTKJZ7HZf1wHCCO9BwMqQ1I5LUfVlj5h1O/xbUQJ8V2iHS', 'Restaurant', 'Manager', '555-123-4567', 'restaurant_manager');
+-- Password is 'admin123' (hashed with bcrypt)
+
+-- Insert sample customer
+INSERT INTO `users` (`email`, `password`, `first_name`, `last_name`, `phone`) 
+VALUES ('customer@example.com', '$2b$10$HkQvGy4rTKJZ7HZf1wHCCO9BwMqQ1I5LUfVlj5h1O/xbUQJ8V2iHS', 'Sample', 'Customer', '555-987-6543');
+-- Password is 'admin123' (hashed with bcrypt)
