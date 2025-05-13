@@ -34,9 +34,9 @@ This project was developed as part of an academic curriculum, following Agile me
 | Frontend     | React.js, CSS, Styled Components |
 | Backend      | Node.js, Express.js  |
 | Database     | MySQL (Amazon RDS)   |
-| Deployment   | AWS EC2, Elastic Beanstalk |
-| Monitoring   | AWS CloudWatch       |
-| Authentication | JWT, Bcrypt        |
+| Deployment   | AWS EC2, S3 |
+| Monitoring   | AWS CloudWatch    |
+| Authentication | JWT  |
 
 ---
 
