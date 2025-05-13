@@ -27,10 +27,12 @@ const Login = () => {
   const validationSchema = Yup.object({
     email: Yup
       .string()
-      .email('Enter a valid email'),
+      .email('Enter a valid email')
+      .required('Email is required'),
     password: Yup
       .string()
-      .min(6, 'Password should be of minimum 6 characters length'),
+      .min(6, 'Password should be of minimum 6 characters length')
+      .required('Password is required'),
   });
 
   // Initialize formik
