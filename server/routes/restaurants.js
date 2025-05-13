@@ -3,6 +3,7 @@ const express = require('express');
 const router = express.Router();
 const { check } = require('express-validator');
 const restaurantController = require('../controllers/restaurantController');
+const tableController = require('../controllers/tableController');
 const { auth, isRestaurantManager, isAdmin, isRestaurantOwner } = require('../middleware/auth');
 const multer = require('multer');
 const path = require('path');
@@ -108,5 +109,14 @@ router.get('/manager/list', [auth, isRestaurantManager], restaurantController.ge
 // @desc    Get pending restaurant approvals
 // @access  Private (Admin only)
 router.get('/admin/pending', [auth, isAdmin], restaurantController.getPendingRestaurants);
+
+// @route   GET api/restaurants/:restaurantId/tables
+// @desc    Get tables for a specific restaurant
+// @access  Private (Restaurant Manager)
+router.get(
+  '/:restaurantId/tables',
+  [auth, isRestaurantManager],
+  tableController.getRestaurantTables
+);
 
 module.exports = router;
