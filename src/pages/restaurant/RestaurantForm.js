@@ -360,8 +360,14 @@ const RestaurantForm = () => {
     formik.handleSubmit(e);
   };
   
-  
- 
+  // Render loading state
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
   
   return (
     <Container maxWidth="lg" sx={{ my: 4 }}>
