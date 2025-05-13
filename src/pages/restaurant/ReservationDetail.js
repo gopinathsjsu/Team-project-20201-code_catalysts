@@ -80,8 +80,30 @@ const ReservationDetail = () => {
   // State for cancel dialog
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
   
-
-
+  // Fetch reservation data
+  useEffect(() => {
+    const fetchReservation = async () => {
+      setLoading(true);
+      setError(null);
+      
+      try {
+        // In a real application, this would be an API call
+        // For now, we'll use mock data
+        setTimeout(() => {
+          setReservation(mockReservation);
+          setStatus(mockReservation.status);
+          setNotes(mockReservation.notes || '');
+          setLoading(false);
+        }, 500);
+      } catch (err) {
+        setError('Failed to fetch reservation details');
+        toast.error('Failed to fetch reservation details');
+        setLoading(false);
+      }
+    };
+    
+    fetchReservation();
+  }, [id]);
   
   // Handle status change
   const handleStatusChange = (event) => {
