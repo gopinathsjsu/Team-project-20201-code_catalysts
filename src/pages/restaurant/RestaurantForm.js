@@ -54,6 +54,18 @@ const cuisineTypes = [
   'American',
   'French',
   'Mediterranean',
+  'Thai',
+  'Vietnamese',
+  'Korean',
+  'Spanish',
+  'Greek',
+  'Seafood',
+  'BBQ',
+  'Vegetarian',
+  'Vegan',
+  'Fusion',
+  'International',
+  'Other'
 ];
 
 // Days of the week
