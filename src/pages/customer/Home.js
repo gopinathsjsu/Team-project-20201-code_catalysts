@@ -1,5 +1,5 @@
 // src/pages/customer/Home.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Container, 
@@ -17,12 +17,16 @@ import {
   FormControl,
   InputLabel,
   Select,
-  Rating
+  Rating,
+  CircularProgress,
+  Alert
 } from '@mui/material';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider, DatePicker, TimePicker } from '@mui/x-date-pickers';
 import { format } from 'date-fns';
 import { Search as SearchIcon } from '@mui/icons-material';
+import { getAllRestaurants } from '../../services/restaurantService';
+import { toast } from 'react-toastify';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -30,50 +34,44 @@ const Home = () => {
   // Search form state
   const [searchParams, setSearchParams] = useState({
     date: new Date(),
-    time: new Date(),
+    time: new Date(new Date().setHours(19, 0, 0, 0)), // Default to 7:00 PM
     partySize: 2,
     location: ''
   });
   
-  // Featured restaurants (mockup data)
-  const featuredRestaurants = [
-    {
-      id: 1,
-      name: 'The Gourmet Kitchen',
-      cuisine: 'International',
-      rating: 4.8,
-      costRating: 4,
-      image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4',
-      description: 'Experience fine dining with our award-winning international cuisine in an elegant setting.'
-    },
-    {
-      id: 2,
-      name: 'Seaside Delights',
-      cuisine: 'Seafood',
-      rating: 4.5,
-      costRating: 3,
-      image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d',
-      description: 'Fresh seafood prepared with passion, offering ocean views and a relaxed atmosphere.'
-    },
-    {
-      id: 3,
-      name: 'Bella Italia',
-      cuisine: 'Italian',
-      rating: 4.7,
-      costRating: 3,
-      image: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5',
-      description: 'Authentic Italian cuisine with homemade pasta and wood-fired pizzas in a cozy setting.'
-    },
-    {
-      id: 4,
-      name: 'Spice Route',
-      cuisine: 'Indian',
-      rating: 4.6,
-      costRating: 2,
-      image: 'https://images.unsplash.com/photo-1505253758473-96b7015fcd40',
-      description: 'A culinary journey through India with aromatic spices and traditional recipes.'
-    }
-  ];
+  // Featured restaurants state
+  const [featuredRestaurants, setFeaturedRestaurants] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
+  // Fetch featured restaurants on component mount
+  useEffect(() => {
+    const fetchFeaturedRestaurants = async () => {
+      setLoading(true);
+      setError(null);
+      
+      try {
+        const response = await getAllRestaurants();
+        
+        if (response.success) {
+          // Sort by ratings and take top 4
+          const sortedRestaurants = response.restaurants.sort((a, b) => 
+            (b.average_rating || 0) - (a.average_rating || 0)
+          );
+          
+          setFeaturedRestaurants(sortedRestaurants.slice(0, 4));
+        } else {
+          setError(response.message || 'Failed to fetch featured restaurants');
+        }
+      } catch (err) {
+        setError('An unexpected error occurred. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchFeaturedRestaurants();
+  }, []);
   
   // Handle search form input changes
   const handleInputChange = (field, value) => {
@@ -92,12 +90,12 @@ const Home = () => {
     const formattedTime = format(searchParams.time, 'HH:mm');
     
     // Navigate to search page with parameters
-    navigate(`/search?date=${formattedDate}&time=${formattedTime}&partySize=${searchParams.partySize}&location=${encodeURIComponent(searchParams.location)}`);
+    navigate(`/search?date=${formattedDate}&time=${formattedTime}&partySize=${searchParams.partySize}&location=${encodeURIComponent(searchParams.location || '')}`);
   };
   
   // Generate dollar signs for cost rating
-  const getCostRating = (rating) => {
-    return '₹'.repeat(rating);
+  const getCostRating = (rating = 0) => {
+    return '$'.repeat(rating);
   };
   
   return (
@@ -165,7 +163,13 @@ const Home = () => {
                     name="location"
                     value={searchParams.location}
                     onChange={(e) => handleInputChange('location', e.target.value)}
-                    required
+                    InputProps={{
+                      startAdornment: (
+                        <Box component="span" sx={{ mr: 1 }}>
+                          <SearchIcon color="action" />
+                        </Box>
+                      ),
+                    }}
                   />
                 </Grid>
                 
@@ -187,6 +191,15 @@ const Home = () => {
         </Container>
       </Box>
       
+      {/* Error message if any */}
+      {error && (
+        <Container maxWidth="lg">
+          <Alert severity="error" sx={{ mt: 4 }}>
+            {error}
+          </Alert>
+        </Container>
+      )}
+      
       {/* Featured Restaurants Section */}
       <Container maxWidth="lg" sx={{ mt: 8, mb: 8 }}>
         <Typography variant="h4" component="h2" gutterBottom align="center">
@@ -196,62 +209,78 @@ const Home = () => {
           Discover our most popular dining destinations
         </Typography>
         
-        <Grid container spacing={4}>
-          {featuredRestaurants.map((restaurant) => (
-            <Grid item key={restaurant.id} xs={12} sm={6} md={3}>
-              <Card className="restaurant-card" sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                <CardMedia
-                  component="img"
-                  height="200"
-                  image={restaurant.image}
-                  alt={restaurant.name}
-                />
-                <CardContent sx={{ flexGrow: 1 }}>
-                  <Typography gutterBottom variant="h5" component="h3">
-                    {restaurant.name}
-                  </Typography>
-                  
-                  <Box display="flex" alignItems="center" sx={{ mb: 1 }}>
-                    <Rating 
-                      value={restaurant.rating} 
-                      precision={0.1} 
-                      readOnly 
-                      size="small" 
-                    />
-                    <Typography variant="body2" sx={{ ml: 1 }}>
-                      {restaurant.rating}
+        {loading ? (
+          <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
+            <CircularProgress />
+          </Box>
+        ) : featuredRestaurants.length > 0 ? (
+          <Grid container spacing={4}>
+            {featuredRestaurants.map((restaurant) => (
+              <Grid item key={restaurant.id} xs={12} sm={6} md={3}>
+                <Card className="restaurant-card" sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                  <CardMedia
+                    component="img"
+                    height="200"
+                    image={restaurant.primary_photo 
+                      ? `${process.env.REACT_APP_API_URL}${restaurant.primary_photo}` 
+                      : 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4'}
+                    alt={restaurant.name}
+                  />
+                  <CardContent sx={{ flexGrow: 1 }}>
+                    <Typography gutterBottom variant="h5" component="h3">
+                      {restaurant.name}
                     </Typography>
-                  </Box>
-                  
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                    {restaurant.cuisine} • {getCostRating(restaurant.costRating)}
-                  </Typography>
-                  
-                  <Typography variant="body2" paragraph>
-                    {restaurant.description}
-                  </Typography>
-                </CardContent>
-                <CardActions>
-                  <Button 
-                    size="small" 
-                    color="primary"
-                    onClick={() => navigate(`/restaurant/${restaurant.id}`)}
-                  >
-                    View Details
-                  </Button>
-                  <Button 
-                    size="small" 
-                    variant="contained" 
-                    color="primary"
-                    onClick={() => navigate(`/restaurant/${restaurant.id}`)}
-                  >
-                    Book Now
-                  </Button>
-                </CardActions>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
+                    
+                    <Box display="flex" alignItems="center" sx={{ mb: 1 }}>
+                      <Rating 
+                        value={Number(restaurant.average_rating) || 0} 
+                        precision={0.1} 
+                        readOnly 
+                        size="small" 
+                      />
+                      <Typography variant="body2" sx={{ ml: 1 }}>
+                        {Number(restaurant.average_rating) ? Number(restaurant.average_rating).toFixed(1) : 'No ratings'}
+                      </Typography>
+                    </Box>
+                    
+                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                      {restaurant.cuisine_type} • {getCostRating(restaurant.cost_rating)}
+                    </Typography>
+                    
+                    <Typography variant="body2" paragraph>
+                      {restaurant.description?.length > 100 
+                        ? `${restaurant.description.substring(0, 100)}...` 
+                        : restaurant.description}
+                    </Typography>
+                  </CardContent>
+                  <CardActions>
+                    <Button 
+                      size="small" 
+                      color="primary"
+                      onClick={() => navigate(`/restaurant/${restaurant.id}`)}
+                    >
+                      View Details
+                    </Button>
+                    <Button 
+                      size="small" 
+                      variant="contained" 
+                      color="primary"
+                      onClick={() => navigate(`/restaurant/${restaurant.id}`)}
+                    >
+                      Book Now
+                    </Button>
+                  </CardActions>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        ) : (
+          <Box sx={{ textAlign: 'center', py: 4 }}>
+            <Typography variant="body1">
+              No featured restaurants available at the moment.
+            </Typography>
+          </Box>
+        )}
       </Container>
       
       {/* How It Works Section */}

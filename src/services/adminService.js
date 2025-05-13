@@ -158,6 +158,20 @@ export const exportData = async (params, token) => {
   }
 };
 
+export const deleteRestaurant = async (restaurantId, token) => {
+    try {
+      const response = await axios.delete(`${API_URL}/restaurants/${restaurantId}`, {
+        headers: {
+          'x-auth-token': token
+        }
+      });
+      
+      return response.data;
+    } catch (error) {
+      return handleApiError(error);
+    }
+  };
+
 export default {
   getDashboardStats,
   getAllUsers,
@@ -166,5 +180,6 @@ export default {
   getAllRestaurants,
   getPendingRestaurants,
   approveRestaurant,
-  exportData
+  exportData,
+  deleteRestaurant
 };

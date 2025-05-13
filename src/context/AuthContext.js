@@ -2,7 +2,7 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-import jwt_decode from 'jwt-decode';
+import jwtDecode from 'jwt-decode';
 
 // API services
 import { login, register, getCurrentUser, updateUser } from '../services/authService';
@@ -19,9 +19,8 @@ export const AuthProvider = ({ children }) => {
   // Check if token is expired
   const isTokenExpired = (token) => {
     if (!token) return true;
-    
     try {
-      const decoded = jwt_decode(token);
+      const decoded = jwtDecode(token);
       return decoded.exp < Date.now() / 1000;
     } catch (error) {
       return true;
