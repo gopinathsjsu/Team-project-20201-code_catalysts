@@ -1,71 +1,103 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/lJAxgDL-)
-# Getting Started with Create React App
+# BookTable – Cloud-Hosted Restaurant Reservation System
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Project Overview
 
-## Available Scripts
+BookTable is a full-stack, cloud-hosted restaurant reservation platform designed to streamline table bookings, restaurant management, and administrative oversight. The system is scalable, secure, and supports role-based access for customers, restaurant managers, and system administrators.
 
-In the project directory, you can run:
+This project was developed as part of an academic curriculum, following Agile methodologies and deployed on AWS infrastructure.
 
-### `npm start`
+---
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## 🚀 Features
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### 👥 Role-Based Interfaces
+- **Customer**: Browse, search, and reserve tables; write reviews; manage bookings.
+- **Restaurant Manager**: Control restaurant info, manage reservations, respond to reviews.
+- **Admin**: Approve listings, moderate reviews, manage users and system settings.
 
-### `npm test`
+### 🌐 Cloud Deployment
+- Deployed on **AWS Elastic Beanstalk** with **Auto Scaling Group** and **Load Balancer**.
+- Backend connected to **Amazon RDS (MySQL)** for persistent storage.
+- Monitoring via **Amazon CloudWatch**.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### 🔐 Security & Performance
+- JWT-based authentication and secure session management.
+- Regular backups, audit logs, and GDPR-compliant user data handling.
+- Optimized for scalability (1,000+ concurrent users supported).
 
-### `npm run build`
+---
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## 🛠️ Tech Stack
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+| Layer         | Technology           |
+|--------------|----------------------|
+| Frontend     | React.js, CSS, Styled Components |
+| Backend      | Node.js, Express.js  |
+| Database     | MySQL (Amazon RDS)   |
+| Deployment   | AWS EC2, Elastic Beanstalk |
+| Monitoring   | AWS CloudWatch       |
+| Authentication | JWT, Bcrypt        |
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+---
 
-### `npm run eject`
+## 📐 System Architecture
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+- **3-tier architecture**: Frontend (React) ↔ Backend (Express API) ↔ Database (MySQL)
+- **Modular Components**: Authentication, Reservations, Reviews, User Management
+- **API-Driven**: RESTful endpoints documented and tested
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+---
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## 🧪 Key Modules
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+- **User Authentication**: Secure login/register, password management
+- **Restaurant Search**: Filters by location, cuisine, and ratings
+- **Reservation System**: Real-time booking, confirmation, and cancellations
+- **Review System**: Verified customer reviews with moderation tools
+- **Admin Panel**: Approve listings, manage users, view analytics
 
-## Learn More
+---
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## 📊 Agile Project Management
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+- Followed **Scrum Framework** with:
+  - Sprint Planning and Reviews
+  - Daily Standups
+  - Weekly Scrum Reports
+- Tools: Trello, Slack, GitHub
+- Continuous Integration/Testing integrated in development flow
 
-### Code Splitting
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## 👨‍💻 Team Members
 
-### Analyzing the Bundle Size
+- **Sanjushree Golla** – Frontend Developer (React, UI/UX)
+- **Chanukya Vejandla** – Backend Developer (API Design, Authentication)
+- **Harsha Vardhan Badithaboina** – Deployment & DevOps (AWS, CI/CD)
+- **Jayanth Yarlagadda** – Project Manager & Database Designer (ERD, Agile Coordination)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+---
 
-### Making a Progressive Web App
+## 📦 Setup Instructions
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+### Prerequisites
+- Node.js >= 18
+- MySQL Database
+- AWS Account
 
-### Advanced Configuration
+### Local Setup
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+```bash
+# Clone repository
+git clone https://github.com/your-repo/dineease.git
+cd dineease
 
-### Deployment
+# Install dependencies
+npm install
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+# Configure environment variables (.env)
+cp .env.example .env
+# Add DB credentials and JWT secret
 
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+# Start development server
+npm run dev
