@@ -89,8 +89,8 @@ This project was developed as part of an academic curriculum, following Agile me
 
 ```bash
 # Clone repository
-git clone https://github.com/your-repo/dineease.git
-cd dineease
+git clone https://github.com/gopinathsjsu/Team-project-20201-code_catalysts.git
+cd project_directory_path
 
 # Install dependencies
 npm install
