@@ -213,31 +213,7 @@ const RestaurantDashboard = () => {
   }
   
   // Render error state
-  if (error) {
-    return (
-      <Container maxWidth="lg" sx={{ my: 4 }}>
-        <Alert severity="error" sx={{ mb: 4 }}>
-          {error}
-        </Alert>
-        <Paper sx={{ p: 4, textAlign: 'center' }}>
-          <Typography variant="h5" color="error" gutterBottom>
-            Error Loading Dashboard
-          </Typography>
-          <Typography paragraph>
-            There was a problem loading your restaurant information.
-          </Typography>
-          <Button 
-            variant="contained" 
-            color="primary"
-            onClick={() => window.location.reload()}
-            startIcon={<Refresh />}
-          >
-            Try Again
-          </Button>
-        </Paper>
-      </Container>
-    );
-  }
+ 
   
   // Render no restaurants state
   if (restaurants.length === 0) {
