@@ -64,7 +64,7 @@ This project was developed as part of an academic curriculum, following Agile me
   - Sprint Planning and Reviews
   - Daily Standups
   - Weekly Scrum Reports
-- Tools: Trello, Slack, GitHub
+- Tools: GitHub
 - Continuous Integration/Testing integrated in development flow
 
 ---
