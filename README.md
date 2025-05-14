@@ -160,7 +160,7 @@ This project was developed as part of an academic curriculum, following Agile me
 - Scrum Sheet: [SCRUM_SHEET.xlsx](https://github.com/gopinathsjsu/Team-project-20201-code_catalysts/blob/main/documentation/SCRUM_SHEET.xlsx) 
 - Task Board: [Task_board.xlsx](https://github.com/gopinathsjsu/Team-project-20201-code_catalysts/blob/main/documentation/Task_board.xlsx) 
 
-⚙️ ## XP Core Values
+## ⚙️ XP Core Values
 Extreme Programming (XP) is a software development methodology focused on producing high-quality software through frequent releases, continuous feedback, and close collaboration. Below are the core values of XP and how our team applied them in practice.
 
 💬 **Core Value 1: Communication**
