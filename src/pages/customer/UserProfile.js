@@ -1,5 +1,6 @@
 // src/pages/customer/UserProfile.js
 import React, { useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { 
@@ -15,14 +16,15 @@ import {
   CardContent, 
   CircularProgress,
   InputAdornment,
-  IconButton
+  IconButton,
+  Avatar,
+  Alert
 } from '@mui/material';
-import { Visibility, VisibilityOff, Person, Edit } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
-import Avatar from '@mui/material/Avatar';
+import { Visibility, VisibilityOff, Edit } from '@mui/icons-material';
 import AuthContext from '../../context/AuthContext';
 import { changePassword } from '../../services/authService';
 import { toast } from 'react-toastify';
+import { format } from 'date-fns';
 
 const UserProfile = () => {
   const navigate = useNavigate();
@@ -34,6 +36,7 @@ const UserProfile = () => {
     confirmPassword: false
   });
   const [passwordFormOpen, setPasswordFormOpen] = useState(false);
+  const [error, setError] = useState(null);
   
   // Profile update form
   const profileFormik = useFormik({
@@ -51,10 +54,15 @@ const UserProfile = () => {
       ).optional()
     }),
     onSubmit: async (values) => {
+      setError(null);
       const result = await updateProfile(values);
       
       if (result.success) {
         setEditing(false);
+        toast.success('Profile updated successfully!');
+      } else {
+        setError(result.message || 'Failed to update profile');
+        toast.error(result.message || 'Failed to update profile');
       }
     }
   });
@@ -72,6 +80,7 @@ const UserProfile = () => {
       confirm_password: Yup.string().oneOf([Yup.ref('new_password'), null], 'Passwords must match').required('Confirm your password')
     }),
     onSubmit: async (values) => {
+      setError(null);
       try {
         const passwordData = {
           current_password: values.current_password,
@@ -85,10 +94,12 @@ const UserProfile = () => {
           passwordFormik.resetForm();
           setPasswordFormOpen(false);
         } else {
+          setError(response.message || 'Failed to update password');
           toast.error(response.message || 'Failed to update password');
         }
-      } catch (error) {
-        toast.error(error.message || 'An error occurred');
+      } catch (err) {
+        setError(err.message || 'An unexpected error occurred');
+        toast.error(err.message || 'An unexpected error occurred');
       }
     }
   });
@@ -101,11 +112,28 @@ const UserProfile = () => {
     });
   };
   
+  // Calculate member since date
+  const getMemberSinceDate = () => {
+    if (!currentUser?.created_at) return 'N/A';
+    
+    try {
+      return format(new Date(currentUser.created_at), 'MMMM yyyy');
+    } catch {
+      return 'N/A';
+    }
+  };
+  
   return (
     <Container maxWidth="md" sx={{ my: 4 }}>
       <Typography variant="h4" component="h1" gutterBottom>
         My Profile
       </Typography>
+      
+      {error && (
+        <Alert severity="error" sx={{ mb: 4 }}>
+          {error}
+        </Alert>
+      )}
       
       <Grid container spacing={4}>
         <Grid item xs={12} md={8}>
@@ -405,7 +433,7 @@ const UserProfile = () => {
                 
                 <Typography variant="body2" sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                   <span>Member Since:</span>
-                  <span>April 2025</span>
+                  <span>{getMemberSinceDate()}</span>
                 </Typography>
               </Box>
             </CardContent>
