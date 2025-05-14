@@ -7,6 +7,26 @@ BookTable is a full-stack, cloud-hosted restaurant reservation platform designed
 This project was developed as part of an academic curriculum, following Agile methodologies and deployed on AWS infrastructure.
 
 ---
+🚀 TEAM NAME : Code Catalysts
+
+👥 Team Members & Contributions
+
+## 👨‍💻 Team Members
+
+- **Sanjushree Golla** – Backend Developer (API Design, Authentication)
+- **Chanukya Vejandla** – Deployment & DevOps (AWS, CI/CD)
+- **Harsha Vardhan Badithaboina** – Frontend Developer (React, UI/UX)
+- **Jayanth Yarlagadda** – Frontend and Database Designer (React, Mysql)
+  
+## Contributions
+
+**Sanjushree Golla** – Designed and implemented secure RESTful APIs for user authentication, reservations, and admin workflows. Integrated JWT for access control and bcrypt for password hashing. Coordinated backend logic and input validation. Contributed to the system architecture and database schema.
+
+**Chanukya Vejandla** – Led AWS deployment using Elastic Beanstalk with EC2 Auto Scaling and RDS for MySQL. Set up secure environments with HTTPS and monitored system health using CloudWatch. Ensured high availability and fault tolerance.
+
+**Harsha Vardhan Badithaboina** – Developed the frontend using React.js. Built responsive UI components for all user roles and integrated Google Maps and real-time booking status. Improved accessibility and cross-browser compatibility.
+
+**Jayanth Yarlagadda** – Designed the MySQL database schema and maintained data integrity. Created UI wireframes and documentation. Managed task boards, weekly scrums, and developed architecture and deployment diagrams.
 
 ## 🚀 Features
 
@@ -16,9 +36,10 @@ This project was developed as part of an academic curriculum, following Agile me
 - **Admin**: Approve listings, moderate reviews, manage users and system settings.
 
 ### 🌐 Cloud Deployment
-- Deployed on **AWS Elastic Beanstalk** with **Auto Scaling Group** and **Load Balancer**.
-- Backend connected to **Amazon RDS (MySQL)** for persistent storage.
-- Monitoring via **Amazon CloudWatch**.
+- **Frontend**: Served through CloudFront CDN
+- **Backend**: Running on EC2 instances
+- **Database**: AWS RDS MySQL instance
+- **Load Balancing**: AWS Elastic Load Balancer
 
 ### 🔐 Security & Performance
 - JWT-based authentication and secure session management.
@@ -34,9 +55,9 @@ This project was developed as part of an academic curriculum, following Agile me
 | Frontend     | React.js, CSS, Styled Components |
 | Backend      | Node.js, Express.js  |
 | Database     | MySQL (Amazon RDS)   |
-| Deployment   | AWS EC2, Elastic Beanstalk |
-| Monitoring   | AWS CloudWatch       |
-| Authentication | JWT, Bcrypt        |
+| Deployment   | AWS EC2, S3 |
+| Monitoring   | AWS CloudWatch    |
+| Authentication | JWT  |
 
 ---
 
@@ -45,6 +66,20 @@ This project was developed as part of an academic curriculum, following Agile me
 - **3-tier architecture**: Frontend (React) ↔ Backend (Express API) ↔ Database (MySQL)
 - **Modular Components**: Authentication, Reservations, Reviews, User Management
 - **API-Driven**: RESTful endpoints documented and tested
+
+![image](https://github.com/user-attachments/assets/95187efe-3ce3-4eed-80b6-b25f2a1dfce5)
+
+## Component Diagram
+
+![image](https://github.com/user-attachments/assets/2c7a7f5a-c089-4b06-898c-a0223f451539)
+
+## Deployment Diagram (UML)
+
+![image](https://github.com/user-attachments/assets/2cfdd31f-396f-4278-9771-e99475068276)
+
+## ER Diagram
+
+![image](https://github.com/user-attachments/assets/fb4e5af3-dd7a-4412-8b72-c340d2d99f18)
 
 ---
 
@@ -67,18 +102,18 @@ This project was developed as part of an academic curriculum, following Agile me
 - Tools: GitHub
 - Continuous Integration/Testing integrated in development flow
 
+📈 Team Progress
+- Project Journal: 
+- Burndown Chart: 
+- Sprint Sheet
+- Task Board or work distribution:
+
+Google Sheet links:
+- Link1: https://docs.google.com/spreadsheets/d/19llil24bXxkkQ9kxDbmTfY8rllQxSErUM3GAfFTOp7c/edit?usp=sharing
+- Link2: https://docs.google.com/document/d/1T8ebPMvMR_i4Hgn8QFiI1tmCeKMMcX3MhrxIDDxT7BQ/edit?usp=sharing
 ---
-
-## 👨‍💻 Team Members
-
-- **Sanjushree Golla** – Frontend Developer (React, UI/UX)
-- **Chanukya Vejandla** – Backend Developer (API Design, Authentication)
-- **Harsha Vardhan Badithaboina** – Deployment & DevOps (AWS, CI/CD)
-- **Jayanth Yarlagadda** – Project Manager & Database Designer (ERD, Agile Coordination)
-
----
-
-## 📦 Setup Instructions
+## 🛠️ Project Setup
+📦 Setup Instructions
 
 ### Prerequisites
 - Node.js >= 18
@@ -88,16 +123,18 @@ This project was developed as part of an academic curriculum, following Agile me
 ### Local Setup
 
 ```bash
-# Clone repository
+# Clone the repository
 git clone https://github.com/gopinathsjsu/Team-project-20201-code_catalysts.git
 cd project_directory_path
 
-# Install dependencies
+# Backend setup
+cd backend
 npm install
-
-# Configure environment variables (.env)
 cp .env.example .env
-# Add DB credentials and JWT secret
-
-# Start development server
+# Add DB credentials & JWT secret
 npm run dev
+
+# Frontend setup
+cd ../frontend
+npm install
+npm start

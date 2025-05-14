@@ -34,6 +34,7 @@ const checkRestaurantOwnership = async (restaurantId, userId) => {
     return { owned: true, exists: true };
 };
 
+
 // @desc    Get tables for a specific restaurant
 // @route   GET /api/restaurants/:restaurantId/tables
 // @access  Private (Restaurant Manager)
@@ -102,7 +103,6 @@ exports.createTable = async (req, res) => {
     res.status(500).json({ success: false, message: 'Server error' });
   }
 };
-
 
 // @desc    Update an existing table
 // @route   PUT /api/tables/:id
