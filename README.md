@@ -102,11 +102,9 @@ node index.js
 
 #To start Frontend
 cd..
-npm start
 
 # Configure environment variables (.env)
 cp .env.example .env
-# Add DB credentials and JWT secret
 
 # Start development server
 npm run dev
