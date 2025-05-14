@@ -62,6 +62,14 @@ This project was developed as part of an academic curriculum, following Agile me
 ---
 
 ### 💡 Design Decisions
+
+## 🖥️ User Experience
+🧩 Web-first, responsive layouts for desktop and mobile
+
+🔄 Streamlined booking flow (search → select time slot → confirm)
+
+⏱️ Real-time availability checks to avoid double-bookings
+
 ## 🔐 Authentication & Security
 🛡️ JWT for stateless, role-based access control (Customer, Manager, Admin)
 
@@ -69,12 +77,6 @@ This project was developed as part of an academic curriculum, following Agile me
 
 🌐 Enforced HTTPS, CORS policies, and rate limiting on sensitive routes
 
-## 🌍 External Integrations
-📍 Integrated Google Maps Places API for location services and embedding maps
-
-☁️ Used AWS S3 for storing and serving restaurant images
-
-✉️ Nodemailer for booking confirmation emails/SMS
 
 ## 🚀 Deployment
 🖥️ Frontend: React.js single-page application hosted on AWS S3 & CloudFront
@@ -85,31 +87,24 @@ This project was developed as part of an academic curriculum, following Agile me
 
 📁 File Storage: AWS S3 for restaurant image uploads
 
-## 🖥️ User Experience
-🧩 Web-first, responsive layouts for desktop and mobile
+## 🌍 External Integrations
+📍 Integrated Google Maps Places API for location services and embedding maps
 
-🔄 Streamlined booking flow (search → select time slot → confirm)
+☁️ Used AWS S3 for storing and serving restaurant images
 
-⏱️ Real-time availability checks to avoid double-bookings
+✉️ Nodemailer for booking confirmation emails/SMS
+
 
 ## 🧱 Design Patterns
-### 🧭 MVC Pattern
-Organizes the app into Models, Views, and Controllers for clean separation of concerns
 
-### ♻️ Singleton Pattern
-Ensures single instances of shared resources like DB connections and email utilities
-
-### 🏭 Factory Pattern
-Dynamically creates objects like JWT tokens and filenames based on parameters
-
-### 👀 Observer Pattern
-Sends notifications (e.g., emails) when reservation statuses or events change
-
-### 🧰 Builder Pattern
-Constructs SQL queries dynamically based on request data
-
-### 🧠 Strategy Pattern
-Defines flexible strategies for file handling like storage destinations and filenames
+| **Pattern Name**       | **Description** |
+|------------------------|-----------------|
+| 🧭 **MVC Pattern**      | Organizes the app into Models, Views, and Controllers for clean separation of concerns |
+| ♻️ **Singleton Pattern**| Ensures single instances of shared resources like DB connections and email utilities |
+| 🏭 **Factory Pattern**  | Dynamically creates objects like JWT tokens and filenames based on parameters |
+| 👀 **Observer Pattern** | Sends notifications (e.g., emails) when reservation statuses or events change |
+| 🧰 **Builder Pattern**  | Constructs SQL queries dynamically based on request data |
+| 🧠 **Strategy Pattern** | Defines flexible strategies for file handling like storage destinations and filenames |
 
 ---
 
