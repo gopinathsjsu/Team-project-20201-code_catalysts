@@ -100,6 +100,8 @@ cd server
 npm install
 node index.js
 
+# Add DB credentials and JWT secret to env
+
 #To start Frontend
 cd..
 
