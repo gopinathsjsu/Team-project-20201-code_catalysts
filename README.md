@@ -160,42 +160,7 @@ This project was developed as part of an academic curriculum, following Agile me
 - Scrum Sheet: [SCRUM_SHEET.xlsx](https://github.com/gopinathsjsu/Team-project-20201-code_catalysts/blob/main/documentation/SCRUM_SHEET.xlsx) 
 - Task Board: [Task_board.xlsx](https://github.com/gopinathsjsu/Team-project-20201-code_catalysts/blob/main/documentation/Task_board.xlsx) 
 
-## ⚙️ XP Core Values
-Extreme Programming (XP) is a software development methodology focused on producing high-quality software through frequent releases, continuous feedback, and close collaboration. Below are the core values of XP and how our team applied them in practice.
-
-💬 **Core Value 1: Communication**
-**Definition**:
-Clear sharing of thoughts, decisions, and information between team members, stakeholders, and customers.
-
-**Importance in XP**:
-Communication ensures all team members are aligned and working toward a unified vision. It minimizes misunderstandings and supports faster decision-making.
-
-✅ How the Team Applied Communication
-🕘 **Daily Standups**:
-Team members held daily standup meetings to discuss progress, upcoming tasks, and blockers—ensuring everyone stayed aligned and collaborated effectively.
-
-🤝 **Pair Programming**:
-In selected tasks, developers used pair programming to solve problems together in real time, enabling instant feedback and knowledge sharing.
-
-🔁 **Core Value 2: Feedback**
-**Definition**:
-The process of giving and receiving input on work, helping the team stay aligned with expectations and improve iteratively.
-
-**Importance in XP**:
-Feedback enables quick iterations, early issue detection, and continuous improvement—critical aspects of delivering what the customer truly needs.
-
-✅ How the Team Applied Feedback
-🧪 **Test-Driven Development (TDD)**:
-Developers wrote tests before coding the actual functionality, receiving immediate feedback on code correctness and requirement fulfillment.
-
-⚙️ **Continuous Integration (CI)**:
-A CI pipeline was in place to automatically test and integrate new code, providing quick validation and alerting the team of issues early.
-
-📊 **Sprint Reviews**:
-At the end of each sprint, the team presented completed work to stakeholders for direct feedback and validation.
-
-🔍 **Retrospectives**:
-After each sprint, the team reflected on successes and areas of improvement—creating a feedback loop that continuously enhanced performance and practices.
+## ⚙️ XP Core Values: In the journal pdf
 
 Google Sheet links:
 - Sprint sheet and Task Board: https://docs.google.com/spreadsheets/d/19llil24bXxkkQ9kxDbmTfY8rllQxSErUM3GAfFTOp7c/edit?usp=sharing
