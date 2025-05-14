@@ -99,10 +99,15 @@ This project was developed as part of an academic curriculum, following Agile me
 
 
 🧭 **MVC Pattern**: Organizes the app into Models, Views, and Controllers for clean separation of concerns
+
 ♻️ **Singleton Pattern**: Ensures single instances of shared resources like DB connections and email utilities
+
 🏭 **Factory Pattern**: Dynamically creates objects like JWT tokens and filenames based on parameters
+
 👀 **Observer Pattern**: Sends notifications (e.g., emails) when reservation statuses or events change
+
 🧰 **Builder Pattern**: Constructs SQL queries dynamically based on request data
+
 🧠 **Strategy Pattern**: Defines flexible strategies for file handling like storage destinations and filenames
 
 
