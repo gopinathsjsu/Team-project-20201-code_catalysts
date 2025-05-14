@@ -61,46 +61,49 @@ This project was developed as part of an academic curriculum, following Agile me
 
 ---
 
-## 💡 Design Decisions
+### 💡 Design Decisions
+## 🔐 Authentication & Security
+🛡️ JWT for stateless, role-based access control (Customer, Manager, Admin)
 
-### Authentication & Security
+🔑 bcrypt for password hashing
 
-JWT for stateless, role-based access control (Customer, Manager, Admin)
-bcrypt for password hashing
-HTTPS, CORS policies, and rate limiting on sensitive routes
+🌐 Enforced HTTPS, CORS policies, and rate limiting on sensitive routes
 
-### External Integrations
+## 🌍 External Integrations
+📍 Integrated Google Maps Places API for location services and embedding maps
 
-Integrated Google Maps Places API for location services and embedding maps.
-Used AWS S3 for storing and serving restaurant images
-Nodemailer for booking confirmation emails/SMS
+☁️ Used AWS S3 for storing and serving restaurant images
 
-### Deployment
+✉️ Nodemailer for booking confirmation emails/SMS
 
-Frontend: React.js single-page application hosted on AWS S3 & CloudFront
-Backend: Node.js with Express APIs running on an auto-scaling group of EC2 instances.
-Database: MySQL, managed using AWS RDS.
-File Storage: AWS S3 for restaurant image uploads
+## 🚀 Deployment
+🖥️ Frontend: React.js single-page application hosted on AWS S3 & CloudFront
 
-### User Experience
+🧠 Backend: Node.js with Express APIs running on an auto-scaling group of EC2 instances
 
-Mobile-first, responsive layouts
-Streamlined booking flow (search → select time slot → confirm)
-Real-time availability checks to avoid double-bookings
+🗄️ Database: MySQL, managed using AWS RDS
 
-### Design Patterns
+📁 File Storage: AWS S3 for restaurant image uploads
 
-MVC Pattern: The code follows the Model-View-Controller (MVC) pattern, where Controllers handle HTTP requests and responses. Models (database queries) interact with the database.Views are not explicitly shown here but would typically be the API responses sent back to the client.
+## 🖥️ User Experience
+🧩 Web-first, responsive layouts for desktop and mobile
 
-Singleton Pattern: The Singleton Pattern ensures that a single instance of a resource (e.g., database connection, email utility) is shared across the application.
+🔄 Streamlined booking flow (search → select time slot → confirm)
 
-Factory Pattern: The Factory Pattern is used to create objects (e.g., JWT tokens, filenames) dynamically based on input parameters.
+⏱️ Real-time availability checks to avoid double-bookings
 
-Observer Pattern: The Observer Pattern is used to notify users (via email) about changes in reservation status or other events
+## 🧱 Design Patterns
+# 🧭 MVC Pattern: Organizes the app into Models, Views, and Controllers for clean separation of concerns
 
-Builder Pattern: The Builder Pattern is used to construct SQL queries dynamically based on the fields provided in the request.
+# ♻️ Singleton Pattern: Ensures single instances of shared resources like DB connections and email utilities
 
-Strategy Pattern:The Strategy Pattern is used to define different strategies for file storage (e.g., destination and filename generation).
+# 🏭 Factory Pattern: Dynamically creates objects like JWT tokens and filenames based on parameters
+
+# 👀 Observer Pattern: Sends notifications (e.g., emails) when reservation statuses or events change
+
+# 🧰 Builder Pattern: Constructs SQL queries dynamically based on request data
+
+# 🧠 Strategy Pattern: Defines flexible strategies for file handling like storage destinations and filenames
 
 ---
 
