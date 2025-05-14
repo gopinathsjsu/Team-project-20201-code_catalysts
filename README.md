@@ -95,6 +95,15 @@ cd project_directory_path
 # Install dependencies
 npm install
 
+#To start Backend
+cd server
+npm install
+node index.js
+
+#To start Frontend
+cd..
+npm start
+
 # Configure environment variables (.env)
 cp .env.example .env
 # Add DB credentials and JWT secret
