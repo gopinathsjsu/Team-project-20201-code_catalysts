@@ -103,15 +103,15 @@ This project was developed as part of an academic curriculum, following Agile me
 - Continuous Integration/Testing integrated in development flow
 
 📊 Team Progress
-- [code_catalysts_project_journal.pdf](https://github.com/gopinathsjsu/Team-project-20201-code_catalysts/blob/main/documentation/code_catalysts_project_journal.pdf) 
-- [Burndown_Chart.pdf](https://github.com/gopinathsjsu/Team-project-20201-code_catalysts/blob/main/documentation/Burndown_Chart.pdf) 
-- [SCRUM_SHEET.xlsx](https://github.com/gopinathsjsu/Team-project-20201-code_catalysts/blob/main/documentation/SCRUM_SHEET.xlsx) 
-- [Task_board.xlsx](https://github.com/gopinathsjsu/Team-project-20201-code_catalysts/blob/main/documentation/Task_board.xlsx) 
+- Project Journal: [code_catalysts_project_journal.pdf](https://github.com/gopinathsjsu/Team-project-20201-code_catalysts/blob/main/documentation/code_catalysts_project_journal.pdf) 
+- Burndown Chart: [Burndown_Chart.pdf](https://github.com/gopinathsjsu/Team-project-20201-code_catalysts/blob/main/documentation/Burndown_Chart.pdf) 
+- Scrum Sheet: [SCRUM_SHEET.xlsx](https://github.com/gopinathsjsu/Team-project-20201-code_catalysts/blob/main/documentation/SCRUM_SHEET.xlsx) 
+- Task Board: [Task_board.xlsx](https://github.com/gopinathsjsu/Team-project-20201-code_catalysts/blob/main/documentation/Task_board.xlsx) 
 
 
 Google Sheet links:
-- Link1: https://docs.google.com/spreadsheets/d/19llil24bXxkkQ9kxDbmTfY8rllQxSErUM3GAfFTOp7c/edit?usp=sharing
-- Link2: https://docs.google.com/document/d/1T8ebPMvMR_i4Hgn8QFiI1tmCeKMMcX3MhrxIDDxT7BQ/edit?usp=sharing
+- Sprint sheet and Task Board: https://docs.google.com/spreadsheets/d/19llil24bXxkkQ9kxDbmTfY8rllQxSErUM3GAfFTOp7c/edit?usp=sharing
+- Burndown Chart: https://docs.google.com/document/d/1T8ebPMvMR_i4Hgn8QFiI1tmCeKMMcX3MhrxIDDxT7BQ/edit?usp=sharing
 ---
 ## 🛠️ Project Setup
 📦 Setup Instructions
