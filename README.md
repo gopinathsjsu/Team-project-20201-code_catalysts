@@ -63,7 +63,7 @@ This project was developed as part of an academic curriculum, following Agile me
 
 ## 💡 Design Decisions
 
-###Authentication & Security
+### Authentication & Security
 
 JWT for stateless, role-based access control (Customer, Manager, Admin)
 bcrypt for password hashing
