@@ -108,8 +108,8 @@ Burndown Chart:
 Sprint Sheet
 Task Board or work distribution: 
 ---
-🛠️ Project Setup
-## 📦 Setup Instructions
+## 🛠️ Project Setup
+📦 Setup Instructions
 
 ### Prerequisites
 - Node.js >= 18
