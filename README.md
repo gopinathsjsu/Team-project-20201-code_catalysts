@@ -102,8 +102,13 @@ This project was developed as part of an academic curriculum, following Agile me
 - Tools: GitHub
 - Continuous Integration/Testing integrated in development flow
 
+📈 Team Progress
+Project Journal: 
+Burndown Chart: 
+Sprint Sheet
+Task Board or work distribution: 
 ---
-
+🛠️ Project Setup
 ## 📦 Setup Instructions
 
 ### Prerequisites
@@ -114,16 +119,18 @@ This project was developed as part of an academic curriculum, following Agile me
 ### Local Setup
 
 ```bash
-# Clone repository
+# Clone the repository
 git clone https://github.com/gopinathsjsu/Team-project-20201-code_catalysts.git
 cd project_directory_path
 
-# Install dependencies
+# Backend setup
+cd backend
 npm install
-
-# Configure environment variables (.env)
 cp .env.example .env
-# Add DB credentials and JWT secret
-
-# Start development server
+# Add DB credentials & JWT secret
 npm run dev
+
+# Frontend setup
+cd ../frontend
+npm install
+npm start
