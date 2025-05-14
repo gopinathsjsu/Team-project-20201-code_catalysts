@@ -61,6 +61,44 @@ This project was developed as part of an academic curriculum, following Agile me
 
 ---
 
+Design Decisions
+Authentication & Security
+JWT for stateless, role-based access control (Customer, Manager, Admin)
+
+bcrypt for password hashing
+
+Enforced HTTPS, CORS policies, and rate limiting on sensitive routes
+
+External Integrations
+Google Maps Places API for geolocation and map embeds
+
+AWS S3 for storing and serving restaurant photos
+
+Nodemailer for booking confirmation emails and SMS notifications
+
+Deployment
+Frontend: React.js single-page app, hosted on AWS S3 & CloudFront
+
+Backend: Node.js & Express APIs, running on an Auto Scaling group of EC2 instances
+
+Database: MongoDB Atlas cluster
+
+File Storage: AWS S3 for restaurant image uploads
+
+User Experience
+Mobile-first, responsive layouts
+
+Streamlined booking flow: search → select time slot → confirm
+
+Real-time availability checks to avoid double bookings
+
+Design Patterns
+MVC: Separation of Controllers (Express routes), Services (business logic), and Models (Mongoose schemas)
+
+Singleton: Single shared MongoDB connection instance across modules
+
+Factory: Service factories to instantiate Mongoose models and helpers
+
 ## 📐 System Architecture
 
 - **3-tier architecture**: Frontend (React) ↔ Backend (Express API) ↔ Database (MySQL)
