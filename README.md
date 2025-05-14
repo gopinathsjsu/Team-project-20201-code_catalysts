@@ -61,7 +61,7 @@ This project was developed as part of an academic curriculum, following Agile me
 
 ---
 
-##💡 Design Decisions
+## 💡 Design Decisions
 
 ###Authentication & Security
 
@@ -82,17 +82,25 @@ Backend: Node.js with Express APIs running on an auto-scaling group of EC2 insta
 Database: MySQL, managed using AWS RDS.
 File Storage: AWS S3 for restaurant image uploads
 
-###User Experience
+### User Experience
 
 Mobile-first, responsive layouts
 Streamlined booking flow (search → select time slot → confirm)
 Real-time availability checks to avoid double-bookings
 
-###Design Patterns
+### Design Patterns
 
-MVC: Separation of Controllers (Express routes), Services (business logic) and Models (Mongoose schemas)
-Singleton: Single shared MongoDB connection instance across modules
-Factory: Service factories to instantiate Mongoose models and helpers
+MVC Pattern: The code follows the Model-View-Controller (MVC) pattern, where Controllers handle HTTP requests and responses. Models (database queries) interact with the database.Views are not explicitly shown here but would typically be the API responses sent back to the client.
+
+Singleton Pattern: The Singleton Pattern ensures that a single instance of a resource (e.g., database connection, email utility) is shared across the application.
+
+Factory Pattern: The Factory Pattern is used to create objects (e.g., JWT tokens, filenames) dynamically based on input parameters.
+
+Observer Pattern: The Observer Pattern is used to notify users (via email) about changes in reservation status or other events
+
+Builder Pattern: The Builder Pattern is used to construct SQL queries dynamically based on the fields provided in the request.
+
+Strategy Pattern:The Strategy Pattern is used to define different strategies for file storage (e.g., destination and filename generation).
 
 ---
 
