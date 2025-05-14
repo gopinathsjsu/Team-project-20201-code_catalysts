@@ -103,10 +103,10 @@ This project was developed as part of an academic curriculum, following Agile me
 - Continuous Integration/Testing integrated in development flow
 
 📊 Team Progress
-- [code_catalysts_project_journal.pdf](https://github.com/gopinathsjsu/Team-project-20201-code_catalysts/blob/main/documentation/code_catalysts_project_journal.pdf) *(GitHub link)*
-- [Burndown_Chart.pdf](https://github.com/gopinathsjsu/Team-project-20201-code_catalysts/blob/main/documentation/Burndown_Chart.pdf) *(GitHub link)*
-- [SCRUM_SHEET.xlsx](https://github.com/gopinathsjsu/Team-project-20201-code_catalysts/blob/main/documentation/SCRUM_SHEET.xlsx) *(GitHub link)*
-- [Task_board.xlsx](https://github.com/gopinathsjsu/Team-project-20201-code_catalysts/blob/main/documentation/Task_board.xlsx) *(GitHub link)*
+- [code_catalysts_project_journal.pdf](https://github.com/gopinathsjsu/Team-project-20201-code_catalysts/blob/main/documentation/code_catalysts_project_journal.pdf) 
+- [Burndown_Chart.pdf](https://github.com/gopinathsjsu/Team-project-20201-code_catalysts/blob/main/documentation/Burndown_Chart.pdf) 
+- [SCRUM_SHEET.xlsx](https://github.com/gopinathsjsu/Team-project-20201-code_catalysts/blob/main/documentation/SCRUM_SHEET.xlsx) 
+- [Task_board.xlsx](https://github.com/gopinathsjsu/Team-project-20201-code_catalysts/blob/main/documentation/Task_board.xlsx) 
 
 
 Google Sheet links:
