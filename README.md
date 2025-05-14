@@ -102,11 +102,12 @@ This project was developed as part of an academic curriculum, following Agile me
 - Tools: GitHub
 - Continuous Integration/Testing integrated in development flow
 
-📈 Team Progress
-- Project Journal: code_catalysts_project_journal.pdf
-- Burndown Chart: Burndown_Chart.pdf
-- Sprint Sheet: SCRUM_SHEET.xlsx
-- Task Board or work distribution: Task_board.xlsx
+📊 Team Progress
+- [code_catalysts_project_journal.pdf](https://github.com/gopinathsjsu/Team-project-20201-code_catalysts/blob/main/documentation/code_catalysts_project_journal.pdf) *(GitHub link)*
+- [Burndown_Chart.pdf](https://github.com/gopinathsjsu/Team-project-20201-code_catalysts/blob/main/documentation/Burndown_Chart.pdf) *(GitHub link)*
+- [SCRUM_SHEET.xlsx](https://github.com/gopinathsjsu/Team-project-20201-code_catalysts/blob/main/documentation/SCRUM_SHEET.xlsx) *(GitHub link)*
+- [Task_board.xlsx](https://github.com/gopinathsjsu/Team-project-20201-code_catalysts/blob/main/documentation/Task_board.xlsx) *(GitHub link)*
+
 
 Google Sheet links:
 - Link1: https://docs.google.com/spreadsheets/d/19llil24bXxkkQ9kxDbmTfY8rllQxSErUM3GAfFTOp7c/edit?usp=sharing
