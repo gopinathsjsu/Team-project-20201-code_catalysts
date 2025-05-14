@@ -160,7 +160,7 @@ This project was developed as part of an academic curriculum, following Agile me
 - Scrum Sheet: [SCRUM_SHEET.xlsx](https://github.com/gopinathsjsu/Team-project-20201-code_catalysts/blob/main/documentation/SCRUM_SHEET.xlsx) 
 - Task Board: [Task_board.xlsx](https://github.com/gopinathsjsu/Team-project-20201-code_catalysts/blob/main/documentation/Task_board.xlsx) 
 
-## ⚙️ XP Core Values: In the journal pdf
+⚙️ XP Core Values: In the journal pdf
 
 Google Sheet links:
 - Sprint sheet and Task Board: https://docs.google.com/spreadsheets/d/19llil24bXxkkQ9kxDbmTfY8rllQxSErUM3GAfFTOp7c/edit?usp=sharing
