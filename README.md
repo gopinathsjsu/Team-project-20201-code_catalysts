@@ -103,10 +103,14 @@ This project was developed as part of an academic curriculum, following Agile me
 - Continuous Integration/Testing integrated in development flow
 
 📈 Team Progress
-Project Journal: 
-Burndown Chart: 
-Sprint Sheet
-Task Board or work distribution: 
+- Project Journal: 
+- Burndown Chart: 
+- Sprint Sheet
+- Task Board or work distribution:
+
+Google Sheet links:
+- Link1: https://docs.google.com/spreadsheets/d/19llil24bXxkkQ9kxDbmTfY8rllQxSErUM3GAfFTOp7c/edit?usp=sharing
+- Link2: https://docs.google.com/document/d/1T8ebPMvMR_i4Hgn8QFiI1tmCeKMMcX3MhrxIDDxT7BQ/edit?usp=sharing
 ---
 ## 🛠️ Project Setup
 📦 Setup Instructions
